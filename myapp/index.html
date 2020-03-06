@@ -1,0 +1,20 @@
+<html>
+    <head>
+    </head>
+    <body>
+        Name: <div id="user-name"></div>
+        <button id="btn-show-user">Show user</button>
+    <script>
+        var btn = document.getElementById('btn-show-user');
+        var user_name_el = document.getElementById('user-name');
+        btn.addEventListener('click', function () {
+            fetch('/user')
+            .then(res => res.json())
+            .then(user => {
+                console.log(user_name_el);
+                user_name_el.innerHTML = user.name;
+            });
+        });
+    </script>
+    </body>
+</html>
