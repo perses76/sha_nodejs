@@ -38,4 +38,16 @@ app.get('/users', (req, res) => {
     });
 });
 
+app.post('/users', (req, res) => {
+    let user = req.body
+    fs.readFile('data/users.json', (err, content) => {
+        let data = JSON.parse(content);
+        data.push(user);
+        let new_content = JSON.stringify(data);
+        fs.writeFile('data/users.json', new_content, (er) => {
+            res.sendStatus(201);
+        });
+    });
+});
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
