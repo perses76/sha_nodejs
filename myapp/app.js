@@ -42,11 +42,22 @@ app.post('/users', (req, res) => {
     let user = req.body
     fs.readFile('data/users.json', (err, content) => {
         let data = JSON.parse(content);
+        var last_user = data.reduce((a, b) => Math.max(a.id, b.id));
+        let new_id = last_user.id + 1;
+        user.id = new_id;
         data.push(user);
         let new_content = JSON.stringify(data);
         fs.writeFile('data/users.json', new_content, (er) => {
             res.sendStatus(201);
         });
+    });
+});
+
+app.get('/user/:id', (req, res) => {
+    fs.readFile('data/users.json', (err, content) => {
+        let data = JSON.parse(content);
+        var user = data.find(user => user.id == req.params.id);
+        res.json(user);
     });
 });
 
