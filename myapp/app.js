@@ -41,24 +41,48 @@ app.get('/users', (req, res) => {
 app.post('/users', (req, res) => {
     let user = req.body
     fs.readFile('data/users.json', (err, content) => {
-        let data = JSON.parse(content);
-        var last_user = data.reduce((a, b) => Math.max(a.id, b.id));
+        let users = JSON.parse(content);
+        var last_user = users.reduce((a, b) => Math.max(a.id, b.id));
         let new_id = last_user.id + 1;
         user.id = new_id;
-        data.push(user);
-        let new_content = JSON.stringify(data);
+        users.push(user);
+        let new_content = JSON.stringify(users);
         fs.writeFile('data/users.json', new_content, (er) => {
             res.sendStatus(201);
         });
     });
 });
 
-app.get('/user/:id', (req, res) => {
+app.get('/users/:id', (req, res) => {
     fs.readFile('data/users.json', (err, content) => {
-        let data = JSON.parse(content);
-        var user = data.find(user => user.id == req.params.id);
+        let users = JSON.parse(content);
+        var user = users.find(user => user.id == req.params.id);
         res.json(user);
     });
 });
+
+app.delete('/users/:id', (req, res) => {
+    fs.readFile('data/users.json', (err, content) => {
+        const users = JSON.parse(content);
+        const new_users = users.filter(user => user.id != req.params.id)
+        const new_content = JSON.stringify(new_users);
+        fs.writeFile('data/users.json', new_content, (er) => {
+            res.sendStatus(204);
+        });
+    });
+});
+
+app.put('/users/:id', (req, res) => {
+    fs.readFile('data/users.json', (err, content) => {
+        const users = JSON.parse(content);
+        let user = users.find(user => user.id == req.params.id);
+        Object.assign(user, req.body);
+        const new_content = JSON.stringify(users);
+        fs.writeFile('data/users.json', new_content, (er) => {
+            res.sendStatus(200);
+        });
+    });
+});
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
